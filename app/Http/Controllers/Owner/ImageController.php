@@ -102,6 +102,12 @@ class ImageController extends Controller
     }
 
 
+    /**
+     * 画像削除（指摘#11 修正済み）
+     * 【指摘①】Collection の空判定: if($imageInProducts) は空コレクションでも true になる。
+     * isNotEmpty() で正しく空判定するよう修正。
+     * 【指摘②】末尾で Image::findOrFail($id)->delete() は二重クエリ。取得済みの $image を使うよう修正。
+     */
     public function destroy($id)
     {
         $image = Image::findOrFail($id);
@@ -112,7 +118,8 @@ class ImageController extends Controller
         ->orWhere('image4', $image->id)
         ->get();
 
-        if($imageInProducts){
+        // 修正: if($imageInProducts) → isNotEmpty() で空コレクションを正しく判定
+        if($imageInProducts->isNotEmpty()){
             $imageInProducts->each(function($product) use($image){
                 if($product->image1 === $image->id){
                     $product->image1 = null;
@@ -139,7 +146,8 @@ class ImageController extends Controller
             Storage::delete($filePath);
         }
 
-        Image::findOrFail($id)->delete(); 
+        // 修正: Image::findOrFail($id)->delete() は二重クエリのため、取得済みの $image を使用
+        $image->delete();
 
         return redirect()
         ->route('owner.images.index')

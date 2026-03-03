@@ -17,7 +17,7 @@ class OwnersController extends Controller
     public function __construct()
     {
         $this->middleware('auth:admin');
-    } 
+    }
 
     public function index()
     {
@@ -40,7 +40,7 @@ class OwnersController extends Controller
         $owners = Owner::select('id', 'name', 'email', 'created_at')
         ->paginate(3);
 
-        return view('admin.owners.index', 
+        return view('admin.owners.index',
         compact('owners'));
     }
 
@@ -121,7 +121,10 @@ class OwnersController extends Controller
     }
 
     /**
-     * Update the specified resource in storage.
+     * オーナー情報を更新（指摘#4 修正済み）
+     * 【指摘】update() にバリデーションがなく、name/email が空でも保存でき、メール形式・一意性チェックもない。
+     * また password が空のとき Hash::make('') で空ハッシュが保存されていた。
+     * 修正: validate 追加（email は unique で自分自身の ID を除外）、パスワードは入力時のみ更新。
      *
      * @param  \Illuminate\Http\Request  $request
      * @param  int  $id
@@ -129,10 +132,19 @@ class OwnersController extends Controller
      */
     public function update(Request $request, $id)
     {
+        $request->validate([
+            'name' => 'required|string|max:255',
+            'email' => 'required|email|max:255|unique:owners,email,' . $id,  // 自分自身のIDを除外
+            'password' => 'nullable|string|confirmed|min:8',
+        ]);
+
         $owner = Owner::findOrFail($id);
         $owner->name = $request->name;
         $owner->email = $request->email;
-        $owner->password = Hash::make($request->password);
+        // 修正: パスワードは入力があるときだけハッシュ化して保存（空のときは触らない）
+        if ($request->filled('password')) {
+            $owner->password = Hash::make($request->password);
+        }
         $owner->save();
 
         return redirect()
@@ -161,9 +173,9 @@ class OwnersController extends Controller
         $expiredOwners = Owner::onlyTrashed()->get();
         return view('admin.expired-owners', compact('expiredOwners'));
     }
-    
+
     public function expiredOwnerDestroy($id){
         Owner::onlyTrashed()->findOrFail($id)->forceDelete();
-        return redirect()->route('admin.expired-owners.index'); 
+        return redirect()->route('admin.expired-owners.index');
     }
 }

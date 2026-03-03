@@ -13,6 +13,10 @@ use App\Models\Shop;
 use App\Models\PrimaryCategory;
 use App\Models\Owner;
 use App\Http\Requests\ProductRequest;
+// 指摘#6: store()/update() の catch で使用するため use を追加。
+// 未宣言だと PHP バージョン・環境によって Fatal Error になる可能性あり。
+use Throwable;
+use Illuminate\Support\Facades\Log;
 
 class ProductController extends Controller
 {

@@ -1,5 +1,6 @@
 <?php
 
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ComponentTestController;
 use App\Http\Controllers\LifeCycleTestController;
@@ -17,7 +18,14 @@ use App\Http\Controllers\User\CartController;
 |
 */
 
+/*
+ * 指摘#10: '/' が2つ定義されていたため、認証済みユーザーが '/' にアクセスしても
+ * 常に welcome が表示され商品一覧に到達しなかった。認証済みなら商品一覧へリダイレクトするよう修正。
+ */
 Route::get('/', function () {
+    if (Auth::guard('users')->check()) {
+        return redirect()->route('user.items.index');
+    }
     return view('user.welcome');
 });
 
