@@ -121,8 +121,8 @@ class OwnersController extends Controller
     }
 
     /**
-     * オーナー情報を更新（指摘#4 修正済み）
-     * 【指摘】update() にバリデーションがなく、name/email が空でも保存でき、メール形式・一意性チェックもない。
+     * オーナー情報を更新（指摘#4 / 課題4: バリデーション強化 修正済み）
+     * 【指摘・課題4】update() にバリデーションがなく、name/email が空でも保存でき、メール形式・一意性チェックもない。
      * また password が空のとき Hash::make('') で空ハッシュが保存されていた。
      * 修正: validate 追加（email は unique で自分自身の ID を除外）、パスワードは入力時のみ更新。
      *

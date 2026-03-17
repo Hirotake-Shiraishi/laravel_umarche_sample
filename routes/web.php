@@ -19,8 +19,8 @@ use App\Http\Controllers\User\CartController;
 */
 
 /*
- * 指摘#10: '/' が2つ定義されていたため、認証済みユーザーが '/' にアクセスしても
- * 常に welcome が表示され商品一覧に到達しなかった。認証済みなら商品一覧へリダイレクトするよう修正。
+ * 指摘#10: '/' が2つ定義されていた問題を解消。認証済みなら商品一覧へ、未認証なら welcome を表示。
+ * 商品一覧は /items で提供し、デッドコードをなくす。
  */
 Route::get('/', function () {
     if (Auth::guard('users')->check()) {
@@ -29,9 +29,9 @@ Route::get('/', function () {
     return view('user.welcome');
 });
 
-Route::middleware('auth:users')->group(function(){
-        Route::get('/', [ItemController::class, 'index'])->name('items.index');
-        Route::get('show/{item}', [ItemController::class, 'show'])->name('items.show');
+Route::middleware('auth:users')->group(function () {
+    Route::get('/items', [ItemController::class, 'index'])->name('items.index');
+    Route::get('show/{item}', [ItemController::class, 'show'])->name('items.show');
 });
 
 Route::prefix('cart')->middleware('auth:users')->group(function(){

@@ -14,10 +14,11 @@ class RouteServiceProvider extends ServiceProvider
      * The path to the "home" route for your application.
      *
      * This is used by Laravel authentication to redirect users after login.
+     * 指摘#10: 商品一覧を /items にしたため、ログイン後のホームを /items に合わせる。
      *
      * @var string
      */
-    public const HOME = '/';
+    public const HOME = '/items';
     public const OWNER_HOME = '/owner/dashboard';
     public const ADMIN_HOME = '/admin/dashboard';
 

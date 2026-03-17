@@ -107,8 +107,8 @@ class Product extends Model
     }
 
     /**
-     * ソート順を適用するスコープ（指摘#7 修正済み）
-     * 【指摘】想定外の $sortOrder が渡された場合、関数末尾で return がなく
+     * ソート順を適用するスコープ（指摘#7 / 課題4 評価対象 修正済み）
+     * 【指摘・課題4】想定外の $sortOrder が渡された場合、関数末尾で return がなく
      * 暗黙的に null を返しチェーンが切れてエラーになる。末尾に return $query; を追加。
      */
     public function scopeSortOrder($query, $sortOrder)
@@ -133,8 +133,8 @@ class Product extends Model
     }
 
     /**
-     * カテゴリで絞り込むスコープ（指摘#7 修正済み）
-     * 【指摘】else で return; だと null を返しメソッドチェーンが切れる。
+     * カテゴリで絞り込むスコープ（指摘#7 / 課題4 評価対象 修正済み）
+     * 【指摘・課題4】else で return; だと null を返しメソッドチェーンが切れる。
      * return $query; に修正し、条件に合致しない場合もクエリを返す。
      */
     public function scopeSelectCategory($query, $categoryId)
@@ -147,8 +147,8 @@ class Product extends Model
     }
 
     /**
-     * キーワード検索スコープ（指摘#7 修正済み）
-     * 【指摘】else で return; だと null を返しメソッドチェーンが切れる。
+     * キーワード検索スコープ（指摘#7 / 課題4 評価対象 修正済み）
+     * 【指摘・課題4】else で return; だと null を返しメソッドチェーンが切れる。
      * return $query; に修正。
      */
     public function scopeSearchKeyword($query, $keyword)
